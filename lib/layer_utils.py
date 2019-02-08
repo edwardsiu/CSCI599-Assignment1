@@ -95,6 +95,7 @@ class flatten(object):
         # You need to reshape (flatten) the input features.                         #
         # Store the results in the variable output provided above.                  #
         #############################################################################
+        output = np.reshape(feat, (feat.shape[0], -1))
 
         #############################################################################
         #                             END OF YOUR CODE                              #
@@ -113,6 +114,7 @@ class flatten(object):
         # Store the results in the variable dfeat provided above.                  #
         #############################################################################
 
+        dfeat = np.reshape(dprev, feat.shape)
         #############################################################################
         #                             END OF YOUR CODE                              #
         #############################################################################
@@ -153,6 +155,9 @@ class fc(object):
         # Store the results in the variable output provided above.                  #
         #############################################################################
 
+        feat_r = np.reshape(feat, (-1, self.input_dim))
+        output = np.dot(feat_r, self.params[self.w_name]) + self.params[self.b_name]
+
         #############################################################################
         #                             END OF YOUR CODE                              #
         #############################################################################
@@ -175,6 +180,11 @@ class fc(object):
         # corresponding name.                                                       #
         # Store the output gradients in the variable dfeat provided above.          #
         #############################################################################
+
+        dprev_r = np.reshape(dprev, (feat.shape[0], self.output_dim))
+        dfeat = np.dot(dprev_r, self.params[self.w_name].T)
+        self.grads[self.w_name] = np.dot(feat.T, dprev_r)
+        self.grads[self.b_name] = np.dot(np.ones(self.params[self.b_name].shape), dprev_r)
 
         #############################################################################
         #                             END OF YOUR CODE                              #
@@ -203,6 +213,8 @@ class relu(object):
         # Store the results in the variable output provided above.                  #
         #############################################################################
 
+        output = (feat > 0)*feat
+
         #############################################################################
         #                             END OF YOUR CODE                              #
         #############################################################################
@@ -219,6 +231,8 @@ class relu(object):
         # TODO: Implement the backward pass of a rectified linear unit              #
         # Store the output gradients in the variable dfeat provided above.          #
         #############################################################################
+
+        dfeat = (feat > 0)*dprev
 
         #############################################################################
         #                             END OF YOUR CODE                              #
@@ -260,6 +274,12 @@ class dropout(object):
         # Store the mask in the variable kept provided above.                       #
         # Store the results in the variable output provided above.                  #
         #############################################################################
+
+        if is_training and self.keep_prob > 0:
+            kept = np.random.choice((0,1), size=feat.shape[1:], p=(1-self.keep_prob, self.keep_prob))
+            output = feat*kept
+        else:
+            output = feat
 
         #############################################################################
         #                             END OF YOUR CODE                              #
