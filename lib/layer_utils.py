@@ -184,7 +184,7 @@ class fc(object):
         dprev_r = np.reshape(dprev, (feat.shape[0], self.output_dim))
         dfeat = np.dot(dprev_r, self.params[self.w_name].T)
         self.grads[self.w_name] = np.dot(feat.T, dprev_r)
-        self.grads[self.b_name] = np.dot(np.ones(self.params[self.b_name].shape), dprev_r)
+        self.grads[self.b_name] = np.sum(dprev, axis=0)
 
         #############################################################################
         #                             END OF YOUR CODE                              #
@@ -299,6 +299,11 @@ class dropout(object):
         # Store the output gradients in the variable dfeat provided above.          #
         #############################################################################
 
+        if self.is_training:
+            dfeat = dprev * self.kept
+        else:
+            dfeat = dprev
+
         #############################################################################
         #                             END OF YOUR CODE                              #
         #############################################################################
@@ -325,7 +330,9 @@ class cross_entropy(object):
         # TODO: Implement the forward pass of an CE Loss                            #
         # Store the loss in the variable loss provided above.                       #
         #############################################################################
-
+        num_inputs, num_classes = logit.shape
+        estimates = -np.log(logit[np.arange(num_inputs), label])
+        loss = np.sum(estimates)/num_inputs
         #############################################################################
         #                             END OF YOUR CODE                              #
         #############################################################################
@@ -343,7 +350,10 @@ class cross_entropy(object):
         # TODO: Implement the backward pass of an CE Loss                           #
         # Store the output gradients in the variable dlogit provided above.         #
         #############################################################################
-
+        num_inputs, num_classes = logit.shape
+        one_hot_labels = np.zeros((logit.shape))
+        one_hot_labels[np.arange(num_inputs), label] = 1
+        dlogit = (logit - one_hot_labels)/num_inputs
         #############################################################################
         #                             END OF YOUR CODE                              #
         #############################################################################
@@ -358,7 +368,9 @@ def softmax(feat):
     #############################################################################
     # TODO: Implement the forward pass of a softmax function                    #
     #############################################################################
-
+    exp = np.exp(feat)
+    base = np.sum(exp, axis=1)
+    scores = (exp.T/base).T
     #############################################################################
     #                             END OF YOUR CODE                              #
     #############################################################################
