@@ -76,11 +76,9 @@ class TinyNet(Module):
         self.net = sequential(
             ########## TODO: ##########
             flatten(name="flat"),
-            fc((3*32*32), 70, 1e-2, name="fc"),
+            fc((3*32*32), 75, 1e-2, name="fc"),
             relu(name="relu"),
-            fc(70, 10, 1e-2, name="fc2"),
-            relu(name="relu2"),
-            dropout(keep_prob, seed=seed, name="dropout")
+            fc(75, 10, 1e-2, name="fc2")
             ########### END ###########
         )
 
