@@ -153,7 +153,6 @@ def train_net(data, model, loss_func, optimizer, batch_size, max_epochs,
             # Store the loss to loss_hist                                               #
             #############################################################################
             out = model.forward(data_batch, is_Training=True)
-            #print(out[0])
             loss = loss_func.forward(out, labels_batch)
             loss_hist.append(loss)
             dout = model.backward(loss_func.backward())

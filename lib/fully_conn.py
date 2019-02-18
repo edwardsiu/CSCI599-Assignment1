@@ -76,9 +76,9 @@ class TinyNet(Module):
         self.net = sequential(
             ########## TODO: ##########
             flatten(name="flat"),
-            fc((3*32*32), 75, 1e-2, name="fc"),
+            fc((3*32*32), 370, 5e-3, name="fc"),
             relu(name="relu"),
-            fc(75, 10, 1e-2, name="fc2")
+            fc(370, 10, 5e-3, name="fc2")
             ########### END ###########
         )
 
